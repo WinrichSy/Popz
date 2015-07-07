@@ -144,7 +144,7 @@ public class Creature : MonoBehaviour {
 		}
 	}
 */
-	private void checkInBounds () {
+	private void  checkInBounds() {
 		float xMin = leftBound.transform.position.x;
 		float xMax = rightBound.transform.position.x;
 		float yMax = topBound.transform.position.y;

@@ -3,39 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MultiObjGameManager : MonoBehaviour {
-	/*
-	public int level;
-	private float result = 0f;
-	private string colorCreature = "";
 
-	public GameObject creaturePrefab;
-	public GameObject field;
-
-	//Game State Variables
-	public float pushSpeed = 6.5f;
-
-	void Start() {
-		for (int i = 0; i < level+4; i++) {
-			result = Random.Range (1, 3);
-			print (result);			//test
-			Instantiate(creaturePrefab);
-		}
-	}
-}
-	*/
 	public int level;
 	public int stage;
-	//public int numDistractors;
+	public float pushSpeed = 6.0f;
 
 	public GameObject field;
-	public GameObject creaturePrefab;
 	public GameObject player;
+	public List<Transform> trackingObjects;
+	public GameObject invisibleBoundary;
+	public bool restartBugs = false;
+	public List<Transform> colors;
 
-	private List<Color> colorSet;
+	public int successes = 0;
+	public int failures = 0;
 
 	// Game State Variables
 	private bool gameRunning = false;
-	public float pushSpeed = 6.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -46,36 +30,64 @@ public class MultiObjGameManager : MonoBehaviour {
 		if (gameRunning) {
 			checkGameEnd ();
 		}
-	}
 
-	void startCreatures () {
+		/*
+		if (restartBugs == true) {
+			restartBugs = false;
+//			cleanupLevel();
+//			restartLevel ();
+		}
+		*/
+
 		FieldInfo info = Util.getFieldInfo(field);
-		for (int i = 0; i < level ; ++i) {
-			// Universal parameters for all creatures
-			var spawnPosition = new Vector3(Random.Range (info.lowerX + 1, info.upperX + 7),
-			                                Random.Range (info.lowerY + 5, info.upperY - 1),
-			                                0);
 
-			var creature = Instantiate(creaturePrefab) as GameObject;
-			creature.transform.position = spawnPosition;
-			creature.GetComponent<Movement>().field = field;
-			creature.GetComponent<Movement>().pushSpeed = pushSpeed;
-			creature.GetComponent<CloakControl>().player = player.GetComponentInChildren<MultiObjPlayer>();
-			creature.GetComponent<CloakControl>().setColorSet(colorSet);
-			creature.GetComponent<Selection>().player = player.GetComponentInChildren<MultiObjPlayer>();
+		//Game progression added here
+		//If 3 successful polinations, then add another bug
+		if (successes >= 3) {
+			//add another bug
+			var spawnPosition = new Vector3 (Random.Range (info.lowerX + 1, info.upperX + 7), Random.Range (info.upperY + 1, info.upperY + 3), -2);
+			int rand = Random.Range (0, trackingObjects.Count);
+			Transform creature = Instantiate (trackingObjects [rand], spawnPosition, Quaternion.identity) as Transform;
+			colors.Add(trackingObjects[rand]);
+			successes = 0;
 
-			// Distractor parameters only
-			if (i >= level) {
-				creature.GetComponent<CloakControl>().is_distractor = true;
+		} else if (failures >= 1) {
+			//find a random bug to remove
+			var bugToRemove = GameObject.FindGameObjectWithTag ("Bug");
+			var colorToRemove = bugToRemove.GetComponent<CloakControl>().type;
+
+			//remove that bug from the list as well
+			for(int i = 0; i < colors.Count -1; i++){
+				if( colorToRemove == colors[i].GetComponent<CloakControl>().type){
+					colors.RemoveAt(i);
+					//call its removal function
+					bugToRemove.GetComponent<Movement>().leaveScene();
+//					Destroy (bugToRemove);
+					failures = 0;
+					return;
+				}
 			}
 		}
 	}
 
-/*
-	void startPlayer () {
-		player.GetComponentInChildren<MultiObjPlayer> ().setCollectors (colorSet);
+	void startCreatures () {
+		FieldInfo info = Util.getFieldInfo(field);
+		for (int i = 0; i < level - 3 ; ++i) {
+			// Universal parameters for all creatures
+			var spawnPosition = new Vector3(Random.Range (info.lowerX + 1, info.upperX + 7),
+			                                Random.Range (info.upperY + 1, info.upperY + 3),
+			                                -2);
+
+			int rand = Random.Range (0, trackingObjects.Count);
+			Transform creature = Instantiate (trackingObjects[rand], spawnPosition, Quaternion.identity) as Transform;
+			colors.Add(trackingObjects[rand]);
+//			creature.transform.parent = player.transform;
+
+			creature.gameObject.GetComponent<Movement>().field = field;
+			creature.gameObject.GetComponent<Movement>().pushSpeed = pushSpeed;
+		}
 	}
-*/
+	
 	public void startLevel () {
 		if (stage > level) {
 			++level;
@@ -86,8 +98,6 @@ public class MultiObjGameManager : MonoBehaviour {
 			stage = 1;
 		}
 
-		colorSet = Util.genColorSet (stage);
-//		startPlayer ();
 		startCreatures ();
 		gameRunning = true;
 	}
