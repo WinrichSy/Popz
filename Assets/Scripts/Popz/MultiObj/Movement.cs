@@ -25,9 +25,11 @@ public class Movement : MonoBehaviour {
 	public float speed = 3.0f;
 	public bool plantIsAlive = false;
 	private float plantTimer = 0;
+	private float swipeTimer = 0;
 	private bool pushingBug = false;
 	public bool plantTouched = false;
 	private bool bugLeavesScene = false;
+	private bool isSwiped = false;
 
 	private float moveTicker;
 	private float moveWaitTime = 3f;
@@ -117,9 +119,14 @@ public class Movement : MonoBehaviour {
 				}
 			}
 
+			if(swipeTimer <= 0){
+				isSwiped = false;
+			}
+
 			//moveTicker is decreased by time.deltatime. basically a timer
 			moveTicker -= Time.deltaTime;
 			plantTimer -= Time.deltaTime;
+			swipeTimer -= Time.deltaTime;
 
 			//Gets plant and bug's current position
 			plant = GameObject.FindWithTag ("NewPlant");
@@ -136,21 +143,23 @@ public class Movement : MonoBehaviour {
 					var exclamationMark = this.transform.FindChild ("bugToPlantMarker");
 					exclamationMark.gameObject.SetActive (true);
 
-					if (plantTouched == false) {
-//						float step = 2.0f * Time.deltaTime;
-//						transform.position = Vector2.MoveTowards (bugCurrentPos, plantCurrentPos, step);
-////						objVelocityX = 0;
-////						objVelocityY = 0;
+					if(isSwiped == false){
+						if (plantTouched == false) {
+	//						float step = 2.0f * Time.deltaTime;
+	//						transform.position = Vector2.MoveTowards (bugCurrentPos, plantCurrentPos, step);
+	////						objVelocityX = 0;
+	////						objVelocityY = 0;
 
-						//Translate toward plant
-						Vector3 targetDir = plantCurrentPos - transform.position;
-						targetDir.Normalize ();
-						transform.Translate (targetDir * 2.0f * Time.deltaTime);
-						objVelocityX = 0;
-						objVelocityY = 0;
+							//Translate toward plant
+							Vector3 targetDir = plantCurrentPos - transform.position;
+							targetDir.Normalize ();
+							transform.Translate (targetDir * 2.0f * Time.deltaTime);
+							objVelocityX = 0;
+							objVelocityY = 0;
+						}
+
+						moveTicker = 2.0f;
 					}
-
-					moveTicker = 2.0f;
 				} else {
 					var exclamationMark = this.transform.FindChild ("bugToPlantMarker");
 					exclamationMark.gameObject.SetActive (false);
@@ -341,6 +350,7 @@ public class Movement : MonoBehaviour {
 	private Transform currTouchSprite;
 
 	void OnMouseDown() {
+		isSwiped = true;
 		Debug.Log ("Mouse is down");
 		plantTimer = 1.5f;
 		currTouchSprite = Instantiate (touchSprite, transform.position, Quaternion.identity) as Transform;
@@ -349,6 +359,7 @@ public class Movement : MonoBehaviour {
 	}
 
 	void OnMouseDrag () {
+		isSwiped = true;
 		Debug.Log ("mouse drag!!");
 		plantTimer = 1.5f;
 		if (currTouchSprite) {
@@ -357,6 +368,8 @@ public class Movement : MonoBehaviour {
 	}
 	
 	void OnMouseUp() {
+		swipeTimer = 1.2f;
+		isSwiped = true;
 		plantTimer = 1.5f;
 		if (currTouchSprite) {
 			Destroy (currTouchSprite.gameObject);
