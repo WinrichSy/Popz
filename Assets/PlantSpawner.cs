@@ -71,7 +71,7 @@ public class PlantSpawner : MonoBehaviour {
 //		float yMin = bottomBound.transform.position.y;
 //		Debug.Log ("This is xMax: " + xMax);
 //		Debug.Log ("This is where the plant would spawn: " + (xMax + 5));
-		var spawnPosition = new Vector2 ((xMax + 6), -2);
+		var spawnPosition = new Vector2 ((xMax + 5), -2);
 
 		Transform newPlant = Instantiate (plant, spawnPosition, Quaternion.identity) as Transform;
 		Debug.Log ("NewPlant created!");

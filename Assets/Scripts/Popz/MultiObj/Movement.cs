@@ -171,10 +171,12 @@ public class Movement : MonoBehaviour {
 				exclamationMark.gameObject.SetActive (false);
 			}
 		} else if (bugLeavesScene == true) {
-			var plantCurrentPos = plant.transform.position;
-			objVelocityX = -3.5f;
-			objVelocityY = 3.0f;
-			if (plantCurrentPos.x < leftBound.transform.position.x - 3) {
+			var bugCurrentPos = this.transform;
+//			objVelocityX = 3.5f;
+//			objVelocityY = 3.0f;
+			bugCurrentPos.localScale = new Vector3(-1, 1, 1);
+			bugCurrentPos.transform.Translate(new Vector3( -1.0f, 1.0f, 0) * 2.5f * Time.deltaTime);
+			if (bugCurrentPos.transform.position.x < leftBound.transform.position.x - 1) {
 				Destroy (this.gameObject);
 			}
 		}
@@ -228,8 +230,8 @@ public class Movement : MonoBehaviour {
 
 		//This means bug is too far in left corner. Don't want plant to squish it
 		if (transform.position.x < xMin + 3.5f) {
-			if (transform.position.y < yMin + 5.5f) {
-				Debug.Log ("DONT GET SQUISHED! Moving up and left");
+			if (transform.position.y < yMin + 6.5f) {
+//				Debug.Log ("DONT GET SQUISHED! Moving up and left");
 				objVelocityX = -1.0f;
 				objVelocityY = 3.0f;
 			}
@@ -305,13 +307,13 @@ public class Movement : MonoBehaviour {
 
 		var bugRigidBody = gameObject.GetComponent<Rigidbody2D> ();
 
-		Debug.Log ("collision detected!");
+//		Debug.Log ("collision detected!");
 		if ((other.collider.tag == "Bug")) {
-			Debug.Log("bug on bug collision");
+//			Debug.Log("bug on bug collision");
 			moveTicker = 0;
 		} 
 		else if (other.collider.tag == "NewPlant") {
-			Debug.Log ("making contact with plant");
+//			Debug.Log ("making contact with plant");
 			plantTouched = true;
 			//Get the location of bug plant and change velocity accordingly (to follow same speed as plant)
 			if(plant){
@@ -329,7 +331,7 @@ public class Movement : MonoBehaviour {
 			moveTicker = 0;
 		} 
 		else if (other.collider.tag == "NewPlant") {
-			Debug.Log ("making contact with plant");
+//			Debug.Log ("making contact with plant");
 
 			//Get the location of bug plant and change velocity accordingly (to follow same speed as plant)
 			if(plant){
@@ -361,7 +363,7 @@ public class Movement : MonoBehaviour {
 
 	void OnMouseDown() {
 		isSwiped = true;
-		Debug.Log ("Mouse is down");
+//		Debug.Log ("Mouse is down");
 		plantTimer = 1.5f;
 		currTouchSprite = Instantiate (touchSprite, transform.position, Quaternion.identity) as Transform;
 		flickStart = Camera.main.ScreenToViewportPoint (Input.mousePosition);
@@ -370,7 +372,7 @@ public class Movement : MonoBehaviour {
 
 	void OnMouseDrag () {
 		isSwiped = true;
-		Debug.Log ("mouse drag!!");
+//		Debug.Log ("mouse drag!!");
 		plantTimer = 1.5f;
 		if (currTouchSprite) {
 			currTouchSprite.position = transform.position;

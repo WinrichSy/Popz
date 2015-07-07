@@ -120,15 +120,15 @@ public class PlantInfo : MonoBehaviour {
 		plantRemovalX = leftBound.transform.position.x;
 		var plantCurrPosX = this.transform.position.x;
 
-//		if (plantCurrPosX <= (plantRemovalX - 1f)) {
-//			GameObject[] bugMovements;
-//			bugMovements = GameObject.FindGameObjectsWithTag("Bug");
-//			foreach (GameObject bugMovement in bugMovements){
-//				 bugMovement.GetComponent<Movement>().plantTouched = false;
-//			}
-//			Debug.Log("Plant destroyed!");
-//			plantRemovalAndCalc();
-//		}
+		if (plantCurrPosX <= (plantRemovalX - 1f)) {
+			GameObject[] bugMovements;
+			bugMovements = GameObject.FindGameObjectsWithTag("Bug");
+			foreach (GameObject bugMovement in bugMovements){
+				 bugMovement.GetComponent<Movement>().plantTouched = false;
+			}
+			Debug.Log("Plant destroyed!");
+			plantRemovalAndCalc();
+		}
 
 //		Debug.Log (health);
 		//Calls Planthealthanimation to show current status of plant
