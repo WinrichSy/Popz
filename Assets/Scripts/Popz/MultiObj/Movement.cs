@@ -197,6 +197,16 @@ public class Movement : MonoBehaviour {
 		var currentBugRigidBody = GetComponent<Rigidbody2D> ();
 		currentBugRigidBody.velocity = new Vector2(objVelocityX * extraSpeed, objVelocityY * extraSpeed);
 //		Debug.Log ("extraSpeed: " + extraSpeed);
+		if (objVelocityX < 0.0f) {
+			if(this.transform.localScale.x > -1.0f){
+				this.transform.localScale += new Vector3(-0.25f, 0, 0);
+			}
+		} 
+		else {
+			if(this.transform.localScale.x < 1.0f){
+				this.transform.localScale += new Vector3(0.25f, 0, 0);
+			}
+		}
 
 
 		//Moves bug at the same speed as player
@@ -204,7 +214,7 @@ public class Movement : MonoBehaviour {
 
 //		Debug.Log ("velocity of X: " + currentBugRigidBody.velocity.x);
 //		Debug.Log ("velocity of Y: " + currentBugRigidBody.velocity.y);
-		}
+	}
 
 
 
